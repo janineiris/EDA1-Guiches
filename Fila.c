@@ -66,22 +66,21 @@ bool eCheia(Fila F){
 }
 
 void imprimeFila(Fila F){
-    char senha[5];
     if(F.numElem == 0){
-        printf("    ________________    FILA VAZIA    ________________    \n");
+        printf("            FILA VAZIA            \n");
     }else{
         tNoFila* atual = F.inicio;
         for(int i = 0; i < F.numElem; i++){
-            printf("    %i    ", atual->chegada);
+            printf("    %i,", atual->chegada);
             atual = atual->prox;
         }
         printf("\n");
-        atual = F.inicio;
-        for(int i = 0; i < F.numElem; i++){
-            printf("   %s  ", atual->senha);
-            atual = atual->prox;
-        }
-        printf("\n");
+        // atual = F.inicio;
+        // for(int i = 0; i < F.numElem; i++){
+        //     printf("   %s  ", atual->senha);
+        //     atual = atual->prox;
+        // }
+        // printf("\n");
     }
     return;
 }

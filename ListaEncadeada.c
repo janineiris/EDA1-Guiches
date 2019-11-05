@@ -141,46 +141,52 @@ bool buscaElemento(tListaEncadeada L, int valor) {
 void imprimeAtivosLista(tListaEncadeada L) {
 	tNoLista* pos = L.inicio;
 	while (pos != NULL) {
-		if(pos->ativo = true){
+		if(pos->ativo == true){
 			printf("  Guichê  ");
-			pos = pos->prox;
 		}
+		pos = pos->prox;
 	}
 	printf("\n");
 	pos = L.inicio;
 	while (pos != NULL) {
-		if(pos->ativo = true){
+		if(pos->ativo == true){
 			if(pos->num < 10){
-				printf("     %d    ", pos->num);
+				//printf("     %d    ", pos->num);
+				printf("  %d - %i  ",pos->num, pos->contRegressiva );
 			}else{
-				printf("    %d    ", pos->num);
+				//printf("    %d    ", pos->num);
+				printf("  %d - %i  ",pos->num, pos->contRegressiva );
 			}
-			pos = pos->prox;
 		}
+		pos = pos->prox;
 	}
 	printf("\n");
 }
 
 bool mudaStatus(tListaEncadeada *L, int n){
+	printf("N É ZERO - %i\n", n);
 	if(L->inicio != NULL){
 		tNoLista* atual = L->inicio;
 		while( (atual->prox != NULL) && (atual->num != n) ){
 			atual = atual->prox;
 		}
 		if(atual->num == n){
-			if(atual->ativo == false){
+			if(atual->ativo == false && atual->contRegressiva >= 0){
 				atual->ativo = true;
 				L->ativos[L->numAtivos] = L->numElem;
 				L->numAtivos++;
+				atual->contRegressiva = TEMPOPAUSA;
 			}else{
 				if(atual->contRegressiva <= 30){
 					atual->ativo = false;
 					L->numAtivos--;
+					atual->contRegressiva = -10;
+				}else if(atual->contRegressiva < 0){
+					atual->contRegressiva += 5;
 				}else{
 					return false;
 				}
 			}
-			atual->contRegressiva = TEMPOPAUSA;
 			return true;
 		}
 	}

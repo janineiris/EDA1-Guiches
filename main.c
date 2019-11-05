@@ -17,7 +17,11 @@ int main(){
     Pilha   senhasPrioridade,
             senhasComum;                   //pilha de senhas
 
+    tNoLista* noGuiche;
+    tNoFila* noCliente;
+
     char o[6];
+    int aux;
     // oi = (char*) malloc(sizeof(char)*6);
     srand(time(NULL));
 
@@ -77,9 +81,10 @@ int main(){
     char c = 'B';                   //primeiro caracter da senha de clientes comuns
     char senha[5];                  //string auxiliar de senha
 
-    while(cont < 2){            //96*5 = 8h
+    //INÍCIO DO EXPEDIENTE
+    while(cont < 5){            //96*5 = 8h
         if(pilhaEVazia(senhasComum)){
-            for(int i = 0; i < 3; i++){
+            for(int i = 0; i < 90; i++){
                 for(int j = 0; j < 3; j++){
                     senha[0] = c;
                     senha[1] = senhas[i][0];
@@ -94,7 +99,7 @@ int main(){
             c++;
         }
         if(pilhaEVazia(senhasPrioridade)){
-            for(int i = 0; i < 3; i++){
+            for(int i = 0; i < 90; i++){
                 for(int j = 0; j < 3; j++){
                     senha[0] = 'A';
                     senha[1] = senhas[i][0];
@@ -109,7 +114,7 @@ int main(){
             c++;
         }
 
-        novosClientes = rand()%4 + 1;           //entra até 3 clientes a cada 5 minutos;
+        novosClientes = rand()%4;           //entra até 3 clientes a cada 5 minutos;
         for(int i = 0; i < novosClientes; i++){
             complexidade = rand()%3 + 1;
             prioridade = rand()%2;
@@ -125,16 +130,107 @@ int main(){
 
         while(qntdAtivos(guiches) <= 3){
             for(int i = 0; i < 4; i++){
-                guiche = rand()%(MAXL - 2) + 2;     //troca pessoas em guichês, excluindo os de prioridade
+                guiche = (rand()%(MAXL - 2)) + 2;     //troca pessoas em guichês, excluindo os de prioridade
                 mudaStatus(&guiches, guiche);
             }
         }
 
-        // printf("COMUM\n");
+        noGuiche = guiches.inicio;
+        //INTERVALO DA PRIORIDADE
+        for(int i = 0; i < 2; i++){
+            if(noGuiche->ativo && noGuiche->contRegressiva <= 20){
+                if(i = 0){
+                    aux = 1;
+                }else{
+                    aux = 0;
+                }
+                mudaStatus(&guiches, aux);
+                if(noGuiche->contRegressiva <= 0 && noGuiche->tempoAtendimento <= 0){
+                    if(aux = 0){            //LINDANDO COM GUICHÊ 1
+                        if(guiches.inicio->ativo){
+                            mudaStatus(&guiches, i);
+                        }
+                    }else{                  //LINDANDO COM GUICHÊ 0
+                        if(guiches.inicio->prox->ativo){
+                            if(i == 0){
+                                printf("%i aux = 0\n", noGuiche->num);
+                                printf(noGuiche->ativo ? "true" : "false");
+                            }
+                            mudaStatus(&guiches, i);
+                        }
+                    }
+                }
+            }
+            noGuiche = noGuiche->prox;
+        }
+
+        //INTERVALO GUICHÊ COMUM
+        for(int i = 2; i < guiches.numElem; i++){
+            if(noGuiche->ativo && noGuiche->contRegressiva <= 0 && noGuiche->tempoAtendimento <= 0){
+                mudaStatus(&guiches, noGuiche->num);
+            }
+            noGuiche = noGuiche->prox;
+        }
+
+        noGuiche = guiches.inicio;
+        //CHAMA CLIENTES DA FILA
+        for(int i = 0; i < guiches.numElem; i++){
+            if(noGuiche->ativo && noGuiche->tempoAtendimento <= 0){
+                if(i < 2){
+                    noCliente = clientesPrioridade.inicio;
+                    if(noCliente != NULL){
+                        aux = noCliente->complexidade;
+                        //printf("%i\n", aux);
+                        if(aux == 1){
+                            aux = 5;
+                        }else if(aux == 2){
+                            aux = 10;
+                        }else{
+                            aux = 20;
+                        }
+                        if(desenfileira(&clientesPrioridade)){
+                            noGuiche->tempoAtendimento = aux;
+                        }
+                    }
+                }else{
+                    noCliente = clientesComum.inicio;
+                    if(noCliente != NULL){
+                        aux = clientesComum.inicio->complexidade;
+                        //printf("%i\n", noCliente->chegada);
+                        if(aux == 1){
+                            aux = 5;
+                        }else if(aux == 2){
+                            aux = 10;
+                        }else{
+                            aux = 20;
+                        }
+                        if(desenfileira(&clientesComum)){
+                            noGuiche->tempoAtendimento = aux;
+                        }
+                    }
+                }
+            }
+            //printf("%i\n", noGuiche->num);
+            noGuiche = noGuiche->prox;
+        }
+
+        noGuiche = guiches.inicio;
+        for(int i = 0; i < guiches.numElem; i++){
+            if(noGuiche->ativo){
+                noGuiche->contRegressiva -= 5;
+                noGuiche->tempoAtendimento -= 5;
+            }
+            noGuiche = noGuiche->prox;
+        }
+        imprimeAtivosLista(guiches);
+        printf("\n");
+        printf("Fila Prioridade:");
+        imprimeFila(clientesPrioridade);
+        printf("Fila Comum:");
         imprimeFila(clientesComum);
-        // printf("PRIORIDADE\n");
-        // imprimeFila(clientesPrioridade);
-        //imprimeAtivosLista(guiches);
+        printf("\n\n");
+
+
         cont++;
     }
     //ler(senhasComum, oi);
