@@ -1,0 +1,4 @@
+*.o
+*.pdf
+output
+README.md

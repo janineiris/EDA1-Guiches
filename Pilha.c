@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "Pilha.h"
 
@@ -61,12 +62,13 @@ void desempilha(Pilha* p) {
 }
 
 char* ler(Pilha p, char* senha){			//lê a string do topo
-	char pass[TAMSENHA+1];
+	/*char pass[TAMSENHA+1];
 	for(int i = 0; i < TAMSENHA; i++){
 		pass[i] = p.pilha[p.topo-1][i];
 	}
 	pass[TAMSENHA] = '\0';
-	senha = pass;
+	senha = pass; */
+	strcpy(senha, p.pilha[p.topo-1]);
 	return senha;
 }
 

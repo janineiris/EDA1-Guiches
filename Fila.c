@@ -2,11 +2,13 @@
 #include "stdio.h"
 #include "stdbool.h"
 #include "time.h"
+#include "string.h"
 
 #include "Fila.h"
 
 bool initFila(Fila* F){
     F->numElem = 0;
+    F->contador = 0;
     F->inicio = NULL;
     F->fim = NULL;
     return true;
@@ -19,21 +21,29 @@ bool enfileira(Fila* F, bool prioridade, int complexidade, char senha[], int gui
         return false;
     }
 
+    new->senha = (char*) malloc(sizeof(char) * 5);
+
+    if(new->senha == NULL){
+        return false;
+    }
+
     new->prioridade = prioridade;
     new->complexidade = complexidade;
-    new->senha = senha;
+    strcpy(new->senha, senha);
     new->guiche = guiche;
     new->prox = NULL;
 
     if(F->inicio == NULL){
-        new->chegada = 1;
         F->inicio = new;
     }
 
     if(F->fim != NULL){
         (F->fim)->prox = new;
-        new->chegada = (F->fim)->chegada + 1;
     }
+
+    F->contador++;
+    new->chegada = F->contador;
+
     F->fim = new;
     F->numElem++;
 
@@ -48,6 +58,9 @@ bool desenfileira(Fila* F){
     tNoFila* atual = F->inicio;
 
     F->inicio = atual->prox;
+    if(F->inicio == NULL){
+        F->fim = NULL;
+    }
     F->numElem--;
     free(atual);
 
@@ -74,13 +87,13 @@ void imprimeFila(Fila F){
             printf("    %i,", atual->chegada);
             atual = atual->prox;
         }
-        printf("\n");
-        // atual = F.inicio;
-        // for(int i = 0; i < F.numElem; i++){
-        //     printf("   %s  ", atual->senha);
-        //     atual = atual->prox;
-        // }
-        // printf("\n");
+        printf("\n");/*
+        atual = F.inicio;
+        for(int i = 0; i < F.numElem; i++){
+            printf("   %s  ", atual->senha);
+            atual = atual->prox;
+        }
+        printf("\n");*/
     }
     return;
 }

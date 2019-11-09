@@ -14,6 +14,7 @@ typedef struct NoFila   {   int chegada;    //ordem de chegada
 typedef struct  {   tNoFila* inicio;
                     tNoFila* fim;
                     int numElem;
+                    int contador;       //conta quantos clientes já passaram pelo sistema
                 }   Fila;
 
 bool initFila(Fila* F);

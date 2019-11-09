@@ -45,4 +45,8 @@ int qntdAtivos(tListaEncadeada L);
 
 void listaAtivos(tListaEncadeada L);
 
+bool eAtivo(tListaEncadeada L, int n);
+
+void pausaGuiche(tListaEncadeada *L);
+
 #endif

@@ -164,25 +164,22 @@ void imprimeAtivosLista(tListaEncadeada L) {
 }
 
 bool mudaStatus(tListaEncadeada *L, int n){
-	printf("N É ZERO - %i\n", n);
 	if(L->inicio != NULL){
 		tNoLista* atual = L->inicio;
 		while( (atual->prox != NULL) && (atual->num != n) ){
 			atual = atual->prox;
 		}
 		if(atual->num == n){
-			if(atual->ativo == false && atual->contRegressiva >= 0){
+			if(atual->ativo == false && atual->contRegressiva >= 0){			//guichê inativo sem pausa
 				atual->ativo = true;
 				L->ativos[L->numAtivos] = L->numElem;
 				L->numAtivos++;
 				atual->contRegressiva = TEMPOPAUSA;
 			}else{
-				if(atual->contRegressiva <= 30){
+				if(atual->contRegressiva < 30 && atual->tempoAtendimento <= 0){		//guichê ativo com 1h de trabalho e sem clientes
 					atual->ativo = false;
 					L->numAtivos--;
 					atual->contRegressiva = -10;
-				}else if(atual->contRegressiva < 0){
-					atual->contRegressiva += 5;
 				}else{
 					return false;
 				}
@@ -203,15 +200,32 @@ void listaAtivos(tListaEncadeada L){
 	}
 }
 
-void pausaGuiche(tListaEncadeada *L){
+bool eAtivo(tListaEncadeada L, int n){
+	for(int i = 0; i < L.numAtivos; i++){
+		if(n == L.ativos[i]){
+			return false;
+		}
+	}
+	return true;
+}
+
+void pausaGuiche(tListaEncadeada *L){	//percorre a lista verificando se o guichê está apto para pausa e ativa o próximo
 	if(L->inicio != NULL){
 		tNoLista* atual = L->inicio->prox->prox;
 		while(atual->prox != NULL){
+			bool paused = false;
 			if(atual->ativo == true && atual->contRegressiva <= 0 && atual->tempoAtendimento <= 0){
 				atual->ativo = false;
+				paused = true;
+				L->numAtivos--;
+			}
+			if(paused && atual->prox != NULL){
+				if(!eAtivo(*L, atual->prox->num) && mudaStatus(L, atual->prox->num)){
+					L->ativos++;
+				}
 			}
 			atual = atual->prox;
 		}
-
 	}
+	return;
 }

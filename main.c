@@ -20,7 +20,7 @@ int main(){
     tNoLista* noGuiche;
     tNoFila* noCliente;
 
-    char o[6];
+    char auxSenha[5];
     int aux;
     // oi = (char*) malloc(sizeof(char)*6);
     srand(time(NULL));
@@ -82,57 +82,61 @@ int main(){
     char senha[5];                  //string auxiliar de senha
 
     //INÍCIO DO EXPEDIENTE
-    while(cont < 5){            //96*5 = 8h
-        if(pilhaEVazia(senhasComum)){
-            for(int i = 0; i < 90; i++){
-                for(int j = 0; j < 3; j++){
-                    senha[0] = c;
-                    senha[1] = senhas[i][0];
-                    senha[2] = '3' + (3*j);
-                    senha[3] = senhas[i][1];
-                    senha[4] = '\0';
-                    empilhaString(&senhasComum, senha);
-                    //printf("str %s\n",ler(senhasComum, o));
-                }
-            }
-            //printf("\n\n");
-            c++;
+    while(cont < 40){            //96*5 = 8h
+        //ATÉ 3 CLIENTES ENTRAM NO LOCAL A CADA 5 MINUTOS
+        novosClientes = rand()%4 + 1;
+        if(novosClientes > 2 || (clientesComum.contador > 0 && clientesPrioridade.contador%clientesComum.contador < (4*clientesPrioridade.contador)/(clientesComum.contador + 1))){      //só entra cliente de prioridade quando entra um grupo de 3 clientes, do contrário há um sobrecarga nos guichês de prioridade
+            prioridade = true;
+        }else{
+            prioridade = false;
         }
-        if(pilhaEVazia(senhasPrioridade)){
-            for(int i = 0; i < 90; i++){
-                for(int j = 0; j < 3; j++){
-                    senha[0] = 'A';
-                    senha[1] = senhas[i][0];
-                    senha[2] = '3' + (3*j);
-                    senha[3] = senhas[i][1];
-                    senha[4] = '\0';
-                    empilhaString(&senhasPrioridade, senha);
-                    //printf("str %s\n",ler(senhasPrioridade, o));
-                }
-                //printf("\n");
-            }
-            c++;
-        }
-
-        novosClientes = rand()%4;           //entra até 3 clientes a cada 5 minutos;
         for(int i = 0; i < novosClientes; i++){
+            //TODA VEZ QUE AS SENHAS "ACABAREM", NOVAS SENHAS SERÃO GERADAS E EMPILHADAS
+            if(pilhaEVazia(senhasComum)){
+                for(int i = 0; i < 10; i++){
+                    for(int j = 0; j < 3; j++){
+                        senha[0] = c;
+                        senha[1] = senhas[i][0];
+                        senha[2] = '3' + (3*j);
+                        senha[3] = senhas[i][1];
+                        senha[4] = '\0';
+                        empilhaString(&senhasComum, senha);
+                        //printf(" %s    ",ler(senhasComum, auxSenha));
+                    }
+                }
+                printf("\n");
+                c++;
+            }
+            if(pilhaEVazia(senhasPrioridade)){
+                for(int i = 0; i < 10; i++){
+                    for(int j = 0; j < 3; j++){
+                        senha[0] = 'A';
+                        senha[1] = senhas[i][0];
+                        senha[2] = '3' + (3*j);
+                        senha[3] = senhas[i][1];
+                        senha[4] = '\0';
+                        empilhaString(&senhasPrioridade, senha);
+                        // printf("ANTES %s\n", auxSenha);
+                        //printf("%s      ", ler(senhasPrioridade, auxSenha));
+                        // printf("DEPOIS %s\n", auxSenha);
+                    }
+                }
+                printf("\n");
+                c++;
+            }
+
             complexidade = rand()%3 + 1;
-            prioridade = rand()%2;
 
             if(prioridade){
-                enfileira(&clientesPrioridade, prioridade, complexidade, ler(senhasPrioridade, o), NULL);
+                ler(senhasPrioridade, auxSenha);
+                enfileira(&clientesPrioridade, prioridade, complexidade, auxSenha, -1);
                 desempilhaString(&senhasPrioridade);
             }else{
-                enfileira(&clientesComum, prioridade, complexidade, ler(senhasComum, o), NULL);
+                ler(senhasComum, auxSenha);
+                enfileira(&clientesComum, prioridade, complexidade, auxSenha, -1);
                 desempilhaString(&senhasComum);
             }
-        }
-
-        while(qntdAtivos(guiches) <= 3){
-            for(int i = 0; i < 4; i++){
-                guiche = (rand()%(MAXL - 2)) + 2;     //troca pessoas em guichês, excluindo os de prioridade
-                mudaStatus(&guiches, guiche);
-            }
+            prioridade = false;
         }
 
         noGuiche = guiches.inicio;
@@ -144,6 +148,7 @@ int main(){
                 }else{
                     aux = 0;
                 }
+                printf("%i i e %i aux\n",i, aux);
                 mudaStatus(&guiches, aux);
                 if(noGuiche->contRegressiva <= 0 && noGuiche->tempoAtendimento <= 0){
                     if(aux = 0){            //LINDANDO COM GUICHÊ 1
@@ -165,11 +170,19 @@ int main(){
         }
 
         //INTERVALO GUICHÊ COMUM
-        for(int i = 2; i < guiches.numElem; i++){
-            if(noGuiche->ativo && noGuiche->contRegressiva <= 0 && noGuiche->tempoAtendimento <= 0){
-                mudaStatus(&guiches, noGuiche->num);
+        pausaGuiche(&guiches);
+
+        //ATIVAÇÃO DE GUICHÊS, CASO TENHA POUCOS
+        if(qntdAtivos(guiches) <= 3){         //troca pessoas em guichês, excluindo os de prioridade
+            for(int j = 0; j < 4; j++){
+                // listaAtivos(guiches);
+                // guiche = (rand()%(10)) + 2;
+                // while(eAtivo(guiches, guiche)){        //verifica se o número sorteado já é ativo
+                //     guiche = (rand()%(MAXL - 4)) + 4;
+                // }
+                // printf("no while de ativação %i\n", guiche);
+                mudaStatus(&guiches, (rand()% MAXL - 2) + 2);
             }
-            noGuiche = noGuiche->prox;
         }
 
         noGuiche = guiches.inicio;
@@ -219,9 +232,12 @@ int main(){
             if(noGuiche->ativo){
                 noGuiche->contRegressiva -= 5;
                 noGuiche->tempoAtendimento -= 5;
+            }else{
+                noGuiche->contRegressiva += 5;
             }
             noGuiche = noGuiche->prox;
         }
+
         imprimeAtivosLista(guiches);
         printf("\n");
         printf("Fila Prioridade:");
