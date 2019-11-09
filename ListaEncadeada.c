@@ -161,6 +161,15 @@ void imprimeAtivosLista(tListaEncadeada L) {
 		pos = pos->prox;
 	}
 	printf("\n");
+	pos = L.inicio;
+	while (pos != NULL) {
+		if(pos->ativo == true){
+				//printf("     %d    ", pos->num);
+				printf("    %i	  ", pos->tempoAtendimento );
+		}
+		pos = pos->prox;
+	}
+	printf("\n");
 }
 
 bool mudaStatus(tListaEncadeada *L, int n){
@@ -212,7 +221,7 @@ bool eAtivo(tListaEncadeada L, int n){
 void pausaGuiche(tListaEncadeada *L){	//percorre a lista verificando se o guichê está apto para pausa e ativa o próximo
 	if(L->inicio != NULL){
 		tNoLista* atual = L->inicio->prox->prox;
-		while(atual->prox != NULL){
+		while(atual != NULL){
 			bool paused = false;
 			if(atual->ativo == true && atual->contRegressiva <= 0 && atual->tempoAtendimento <= 0){
 				atual->ativo = false;

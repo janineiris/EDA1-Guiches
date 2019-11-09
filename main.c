@@ -184,24 +184,22 @@ int main(){
         noGuiche = guiches.inicio;
         //CHAMA CLIENTES DA FILA
         for(int i = 0; i < guiches.numElem; i++){
-            if(noGuiche->ativo && noGuiche->tempoAtendimento <= 0){
-                if(i < 2){
-                    noCliente = clientesPrioridade.inicio;
-                    if(noCliente != NULL){
-                        aux = noCliente->complexidade;
-                        //printf("%i\n", aux);
-                        if(aux == 1){
-                            aux = 5;
-                        }else if(aux == 2){
-                            aux = 10;
-                        }else{
-                            aux = 20;
-                        }
-                        if(desenfileira(&clientesPrioridade)){
-                            noGuiche->tempoAtendimento = aux;
-                        }
+            if(noGuiche->ativo && noGuiche->contRegressiva > 5 && noGuiche->tempoAtendimento <= 0){
+                noCliente = clientesPrioridade.inicio;
+                if(noCliente != NULL && i < 2){      //Clientes de Prioridade
+                    aux = noCliente->complexidade;
+                    //printf("%i\n", aux);
+                    if(aux == 1){
+                        aux = 5;
+                    }else if(aux == 2){
+                        aux = 10;
+                    }else{
+                        aux = 20;
                     }
-                }else{
+                    if(desenfileira(&clientesPrioridade)){
+                        noGuiche->tempoAtendimento = aux;
+                    }
+                }else{          //Clientes Comuns
                     noCliente = clientesComum.inicio;
                     if(noCliente != NULL){
                         aux = clientesComum.inicio->complexidade;
@@ -235,8 +233,6 @@ int main(){
         }
 
         imprimeAtivosLista(guiches);
-        printf("%i\n", guiches.inicio->contRegressiva);
-        printf("%i\n", guiches.inicio->prox->contRegressiva);
         printf("\n");
         printf("Fila Prioridade:");
         imprimeFila(clientesPrioridade);
