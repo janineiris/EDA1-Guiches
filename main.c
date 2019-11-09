@@ -82,7 +82,7 @@ int main(){
     char senha[5];                  //string auxiliar de senha
 
     //INÍCIO DO EXPEDIENTE
-    while(cont < 40){            //96*5 = 8h
+    while(cont < 80){            //96*5 = 8h
         //ATÉ 3 CLIENTES ENTRAM NO LOCAL A CADA 5 MINUTOS
         novosClientes = rand()%4 + 1;
         if(novosClientes > 2 || (clientesComum.contador > 0 && clientesPrioridade.contador%clientesComum.contador < (4*clientesPrioridade.contador)/(clientesComum.contador + 1))){      //só entra cliente de prioridade quando entra um grupo de 3 clientes, do contrário há um sobrecarga nos guichês de prioridade
@@ -139,28 +139,24 @@ int main(){
             prioridade = false;
         }
 
-        noGuiche = guiches.inicio;
         //INTERVALO DA PRIORIDADE
+        noGuiche = guiches.inicio;
         for(int i = 0; i < 2; i++){
             if(noGuiche->ativo && noGuiche->contRegressiva <= 20){
-                if(i = 0){
+                if(i == 0){
                     aux = 1;
                 }else{
                     aux = 0;
                 }
-                printf("%i i e %i aux\n",i, aux);
+                //printf("%i i e %i aux\n",i, aux);
                 mudaStatus(&guiches, aux);
                 if(noGuiche->contRegressiva <= 0 && noGuiche->tempoAtendimento <= 0){
-                    if(aux = 0){            //LINDANDO COM GUICHÊ 1
+                    if(aux == 0){            //LIDANDO COM GUICHÊ 1
                         if(guiches.inicio->ativo){
                             mudaStatus(&guiches, i);
                         }
-                    }else{                  //LINDANDO COM GUICHÊ 0
+                    }else{                  //LIDANDO COM GUICHÊ 0
                         if(guiches.inicio->prox->ativo){
-                            if(i == 0){
-                                printf("%i aux = 0\n", noGuiche->num);
-                                printf(noGuiche->ativo ? "true" : "false");
-                            }
                             mudaStatus(&guiches, i);
                         }
                     }
@@ -239,6 +235,8 @@ int main(){
         }
 
         imprimeAtivosLista(guiches);
+        printf("%i\n", guiches.inicio->contRegressiva);
+        printf("%i\n", guiches.inicio->prox->contRegressiva);
         printf("\n");
         printf("Fila Prioridade:");
         imprimeFila(clientesPrioridade);
