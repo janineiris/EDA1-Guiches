@@ -82,7 +82,7 @@ int main(){
     char senha[5];                  //string auxiliar de senha
 
     //INÍCIO DO EXPEDIENTE
-    while(cont < 80){            //96*5 = 8h
+    while(cont < 48){            //96*5 = 8h
         //ATÉ 3 CLIENTES ENTRAM NO LOCAL A CADA 5 MINUTOS
         novosClientes = rand()%4 + 1;
         if(novosClientes > 2 || (clientesComum.contador > 0 && clientesPrioridade.contador%clientesComum.contador < (4*clientesPrioridade.contador)/(clientesComum.contador + 1))){      //só entra cliente de prioridade quando entra um grupo de 3 clientes, do contrário há um sobrecarga nos guichês de prioridade
@@ -169,7 +169,7 @@ int main(){
         pausaGuiche(&guiches);
 
         //ATIVAÇÃO DE GUICHÊS, CASO TENHA POUCOS
-        if(qntdAtivos(guiches) <= 3){         //troca pessoas em guichês, excluindo os de prioridade
+        if(qntdAtivos(guiches) <= 4){         //troca pessoas em guichês, excluindo os de prioridade
             for(int j = 0; j < 4; j++){
                 // listaAtivos(guiches);
                 // guiche = (rand()%(10)) + 2;
@@ -181,12 +181,20 @@ int main(){
             }
         }
 
+        imprimeAtivosLista(guiches);
+        printf("\n");
+        printf("Fila Prioridade:");
+        imprimeFila(clientesPrioridade);
+        printf("Fila Comum:");
+        imprimeFila(clientesComum);
+        printf("\n\n");
+
         noGuiche = guiches.inicio;
         //CHAMA CLIENTES DA FILA
         for(int i = 0; i < guiches.numElem; i++){
             if(noGuiche->ativo && noGuiche->contRegressiva > 5 && noGuiche->tempoAtendimento <= 0){
                 noCliente = clientesPrioridade.inicio;
-                if(noCliente != NULL && i < 2){      //Clientes de Prioridade
+                if(noCliente != NULL && (i < 2 || clientesComum.inicio == NULL) ){      //Clientes de Prioridade
                     aux = noCliente->complexidade;
                     //printf("%i\n", aux);
                     if(aux == 1){
@@ -231,14 +239,6 @@ int main(){
             }
             noGuiche = noGuiche->prox;
         }
-
-        imprimeAtivosLista(guiches);
-        printf("\n");
-        printf("Fila Prioridade:");
-        imprimeFila(clientesPrioridade);
-        printf("Fila Comum:");
-        imprimeFila(clientesComum);
-        printf("\n\n");
 
 
         cont++;
