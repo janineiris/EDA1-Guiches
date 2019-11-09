@@ -21,7 +21,7 @@ duas pilhas de senhas para clientes.
 A complexidade dos problemas dos clientes é escolhida de forma randômica.
 Os novos clientes são enfileirados em duas filas, baseado em prioridade.
 
-* A cada 5 hipotéticos minutos, o programa verifica se um guichê precisa ser desativado para o momento de descanço de seu operador. As condições de parada de um guichê são ter trabalhado por, pelo menos, 1h e não estar atendendo. O tempo máximo para um guichê ficar ativo é 1h30, este tempo só pode ser excedido se o guichê estiver em atendimento.
+* A cada 5 hipotéticos minutos, o programa verifica se um guichê precisa ser desativado para o momento de descanso de seu operador. As condições de parada de um guichê são ter trabalhado por, pelo menos, 1h e não estar atendendo. O tempo máximo para um guichê ficar ativo é 1h30, este tempo só pode ser excedido se o guichê estiver em atendimento.
 Os guichês de prioridade se revezam, podendo estar ativos ao mesmo tempo.
 
 * O tempo mínimo de descanso é 10 minutos
